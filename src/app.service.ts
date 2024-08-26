@@ -2,12 +2,14 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import * as fs from 'fs';
 import * as path from 'path';
+import { GenerateGraphqlObjectType } from './common/types/generate-graphql-object-type.type';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class AppService {
   constructor(@Inject('cartable-svc') private client: ClientProxy) {}
 
-  async generateGraphQLTypes(dtoFilePath: string): Promise<void> {
+  async generateGraphQLInputType(dtoFilePath: string): Promise<void> {
     // Read the DTO file
     const dtoContent = fs.readFileSync(dtoFilePath, 'utf8');
 
@@ -22,6 +24,14 @@ export class AppService {
     fs.writeFileSync(outputPath, graphqlInputType);
 
     console.log(`Generated GraphQL input type at: ${outputPath}`);
+  }
+
+  async generateGraphqlQLObjectType(
+    data: GenerateGraphqlObjectType,
+  ): Promise<void> {
+    const result = await lastValueFrom(
+      this.client.send(data.pattern, data.payload),
+    );
   }
 
   private convertDtoToGraphQL(dtoContent: string): string {

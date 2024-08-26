@@ -1,12 +1,13 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { AppService } from './app.service';
+import { GenerateGraphqlObjectType } from './common/types/generate-graphql-object-type.type';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Post('/generate-types')
-  async generateGraphQLTypes(
+  @Post('/generate-input-type')
+  async generateGraphQLInputType(
     @Body('dtoFilePath') dtoFilePath: string,
   ): Promise<any> {
     console.log('hello world');
@@ -14,6 +15,13 @@ export class AppController {
       throw new Error('Path is required');
     }
 
-    return this.appService.generateGraphQLTypes(dtoFilePath);
+    return this.appService.generateGraphQLInputType(dtoFilePath);
+  }
+
+  @Post('/generate-object-type')
+  async generateGraphqlQLObjectType(
+    @Body() data: GenerateGraphqlObjectType,
+  ): Promise<any> {
+    return this.appService.generateGraphqlQLObjectType(data);
   }
 }
